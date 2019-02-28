@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     chunk YN1 = make_word_double('Y', -1.0);
     chunk comment = make_comment('(', ')', "This is a silly comment");
 
-    block artificial_block(false, {G1, X1pt7, YN1, comment});
+    block artificial_block(false,(std::vector<chunk>) {G1, X1pt7, YN1, comment});
     // The call to set_text is only relevant for debugging. It sets the block
     // member variable block_text to a string representation of the block so
     // that you can see a compact representation of the block during debugging
@@ -41,6 +41,70 @@ int main(int argc, char** argv) {
 
     gcode_program p = parse_gcode(file_contents);
 
-    cout << p << endl;
+    cout << "; filename = " << file << endl;
+    cout << "; print_time = 486" << endl;
+    cout << "; machine = FXX" << endl;
+    cout << "; material = default" << endl;
+    cout << "; layer_height = 0.20" << endl;
+    cout << "; fill_density = 0.25" << endl;
+    cout << "; raft_layers = 0" << endl;
+    cout << "; support_material = 0" << endl;
+    cout << "; support_material_extruder = 1" << endl;
+    cout << "; fill_density = 0.10" << endl;
+    cout << "; support_density = 0.20" << endl;
+    cout << "; shells = 2" << endl;
+    cout << "; speed = 45" << endl;
+    cout << "; total_layers = 22" << endl;
+    cout << "; version = 14070911" << endl;
+    cout << "; total_filament = 0.40" << endl;
+    cout << "; extruder_filament = 0.18:0.21" << endl;
+    cout << "; dimension = 72.35:42.57:6.65" << endl;
+    cout << "; extruder = 3" << endl;
+
+    // fix speed and G0
+    double max_speed=3600.0;
+    for (auto j: p) {
+	bool l_end=true;
+	for (auto k: j) {
+	    switch(k.tp()) {
+	    case CHUNK_TYPE_WORD_ADDRESS:
+		if (k.get_word()=='F') 
+		{
+			
+			if (k.get_address().tp()==ADDRESS_TYPE_DOUBLE)
+			{
+			    if (k.get_address().double_value() < max_speed)
+			    {
+				cout << k << " ";
+			    } else {
+				cout << "F" << max_speed << " ";
+			    }
+			} else {
+			    if (k.get_address().int_value() < (int) max_speed )
+			    {
+				cout << k << endl;
+			    } else {
+				cout << "F" << max_speed << " ";
+			    }
+			}
+		    
+		} else {
+		   if (k.get_word()=='G' && k.get_address().int_value()==0) // filter G0
+			   cout << "G1 ";
+		   else
+		       cout << k << " ";
+		}
+		break;
+	    case CHUNK_TYPE_COMMENT: l_end=false; break;
+	    default: 
+		cout << k << " ";
+	    }
+	}
+	// add dos line ending.
+	if (l_end) cout << "\r\n";
+    }
+    // cout << "Max speed is " << max_speed << endl;
+    
   }
 }
+

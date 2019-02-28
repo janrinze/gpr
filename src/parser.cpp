@@ -8,6 +8,11 @@
 
 using namespace std;
 
+
+
+bool inside_comment=true;
+
+
 namespace gpr {
   
   template<typename T>
@@ -384,7 +389,8 @@ namespace gpr {
       assert(false);
 
     case ']':
-      assert(false);
+      if(!inside_comment) assert(false);
+      // else fall through
       
     default:
       next_token = c;

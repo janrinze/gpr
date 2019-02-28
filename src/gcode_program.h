@@ -32,6 +32,16 @@ namespace gpr {
     }
 
     address_type tp() const { return ad_type; }
+    
+    void set_int_value(int nw_val) {
+       ad_type=ADDRESS_TYPE_INTEGER;
+       val.int_val=nw_val;
+    }
+    
+    void set_double_val(double nw_val) {
+       ad_type=ADDRESS_TYPE_DOUBLE;
+       val.dbl_val=nw_val;
+    }
 
     double double_value() const {
       assert(tp() == ADDRESS_TYPE_DOUBLE);
@@ -96,7 +106,7 @@ namespace gpr {
 
     word_address_data() :
       wd('\0'),
-      adr(ADDRESS_TYPE_INTEGER, {-1}) {}
+      adr(ADDRESS_TYPE_INTEGER, (addr_value){-1}) {}
 
     word_address_data(const char p_wd,
 		      const addr p_adr) :

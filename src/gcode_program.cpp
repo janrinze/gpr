@@ -22,13 +22,13 @@ namespace gpr {
   addr make_int_address(const int i) {
     addr_value v;
     v.int_val = i;
-    return addr{ADDRESS_TYPE_INTEGER, v};
+    return addr(ADDRESS_TYPE_INTEGER, v);
   }
 
   addr make_double_address(const double i) {
     addr_value v;
     v.dbl_val = i;
-    return addr{ADDRESS_TYPE_DOUBLE, v};
+    return addr(ADDRESS_TYPE_DOUBLE, v);
   }
   
   chunk make_word_int(const char c, const int i) {
